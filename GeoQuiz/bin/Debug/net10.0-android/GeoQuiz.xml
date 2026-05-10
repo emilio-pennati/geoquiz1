@@ -4,11 +4,60 @@
         <name>GeoQuiz</name>
     </assembly>
     <members>
-        <member name="T:GeoQuiz.ViewModels.SearchViewModel">
+        <member name="T:GeoQuiz.ViewModels.CountryListItem">
             <inheritdoc/>
         </member>
-        <member name="P:GeoQuiz.ViewModels.SearchViewModel.Title">
-            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.title"/>
+        <member name="P:GeoQuiz.ViewModels.CountryListItem.Code">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.CountryListItem.code"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.CountryListItem.Name">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.CountryListItem.name"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.CountryListItem.FlagUrl">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.CountryListItem.flagUrl"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.CountryListItem.Capital">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.CountryListItem.capital"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.CountryListItem.Region">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.CountryListItem.region"/>
+        </member>
+        <member name="T:GeoQuiz.ViewModels.SearchViewModel">
+            <inheritdoc/>
+            <inheritdoc/>
+            <inheritdoc/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.SearchText">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.searchText"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.IsBusy">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.isBusy"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.ErrorMessage">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.errorMessage"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.HasData">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.hasData"/>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.IsEmptyState">
+            <inheritdoc cref="F:GeoQuiz.ViewModels.SearchViewModel.isEmptyState"/>
+        </member>
+        <member name="M:GeoQuiz.ViewModels.SearchViewModel.OnSearchTextChanged(System.String)">
+            <summary>Executes the logic for when <see cref="P:GeoQuiz.ViewModels.SearchViewModel.SearchText"/> just changed.</summary>
+            <param name="value">The new property value that was set.</param>
+            <remarks>This method is invoked right after the value of <see cref="P:GeoQuiz.ViewModels.SearchViewModel.SearchText"/> is changed.</remarks>
+        </member>
+        <member name="F:GeoQuiz.ViewModels.SearchViewModel.loadCommand">
+            <summary>The backing field for <see cref="P:GeoQuiz.ViewModels.SearchViewModel.LoadCommand"/>.</summary>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.LoadCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:GeoQuiz.ViewModels.SearchViewModel.LoadAsync"/>.</summary>
+        </member>
+        <member name="F:GeoQuiz.ViewModels.SearchViewModel.searchCommand">
+            <summary>The backing field for <see cref="P:GeoQuiz.ViewModels.SearchViewModel.SearchCommand"/>.</summary>
+        </member>
+        <member name="P:GeoQuiz.ViewModels.SearchViewModel.SearchCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:GeoQuiz.ViewModels.SearchViewModel.SearchAsync"/>.</summary>
         </member>
         <member name="T:GeoQuiz.Resource">
             <summary>
@@ -22,8 +71,38 @@
             for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
             </summary>
         </member>
-        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Title">
-            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Title" generated properties.</summary>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Code">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Code" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Name">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Name" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.FlagUrl">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "FlagUrl" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Capital">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Capital" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.Region">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "Region" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.SearchText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "SearchText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.ErrorMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "ErrorMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.HasError">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "HasError" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.HasData">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "HasData" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangingArgs.IsEmptyState">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangingEventArgs"/> instance for all "IsEmptyState" generated properties.</summary>
         </member>
         <member name="T:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs">
             <summary>
@@ -31,8 +110,38 @@
             for all properties generated with <see cref="T:CommunityToolkit.Mvvm.ComponentModel.ObservablePropertyAttribute"/>.
             </summary>
         </member>
-        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Title">
-            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Title" generated properties.</summary>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Code">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Code" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Name">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Name" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.FlagUrl">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "FlagUrl" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Capital">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Capital" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.Region">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "Region" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.SearchText">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "SearchText" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsBusy">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsBusy" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.ErrorMessage">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "ErrorMessage" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.HasError">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "HasError" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.HasData">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "HasData" generated properties.</summary>
+        </member>
+        <member name="F:CommunityToolkit.Mvvm.ComponentModel.__Internals.__KnownINotifyPropertyChangedArgs.IsEmptyState">
+            <summary>The cached <see cref="T:System.ComponentModel.PropertyChangedEventArgs"/> instance for all "IsEmptyState" generated properties.</summary>
         </member>
     </members>
 </doc>
