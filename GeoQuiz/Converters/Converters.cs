@@ -54,3 +54,22 @@ public class ProgressConverter : IValueConverter
         throw new NotImplementedException();
     }
 }
+
+public class AnswerBackgroundConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        var status = value as string;
+        return status switch
+        {
+            "Correct" => Color.FromRgb(76, 175, 80),
+            "Wrong" => Color.FromRgb(244, 67, 54),
+            _ => Color.FromRgb(221, 221, 221)
+        };
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}

@@ -42,6 +42,18 @@ public partial class QuizViewModel : ObservableObject
     private bool _showQuestionImage;
 
     [ObservableProperty]
+    private string _option1 = string.Empty;
+
+    [ObservableProperty]
+    private string _option2 = string.Empty;
+
+    [ObservableProperty]
+    private string _option3 = string.Empty;
+
+    [ObservableProperty]
+    private string _option4 = string.Empty;
+
+    [ObservableProperty]
     private ObservableCollection<string> _options = new();
 
     [ObservableProperty]
@@ -52,6 +64,18 @@ public partial class QuizViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _isCorrect;
+
+    [ObservableProperty]
+    private string? _option1Selected;
+
+    [ObservableProperty]
+    private string? _option2Selected;
+
+    [ObservableProperty]
+    private string? _option3Selected;
+
+    [ObservableProperty]
+    private string? _option4Selected;
 
     [ObservableProperty]
     private int _score;
@@ -66,6 +90,7 @@ public partial class QuizViewModel : ObservableObject
     {
         _quizService = quizService;
         _countryService = countryService;
+        Options = new ObservableCollection<string>();
     }
 
     [RelayCommand]
@@ -122,10 +147,11 @@ public partial class QuizViewModel : ObservableObject
         QuestionImageUrl = question.Country?.FlagUrl;
         
         Options.Clear();
-        foreach (var option in question.Options)
-        {
-            Options.Add(option);
-        }
+        var opts = question.Options;
+        Option1 = opts.Count > 0 ? opts[0] : "";
+        Option2 = opts.Count > 1 ? opts[1] : "";
+        Option3 = opts.Count > 2 ? opts[2] : "";
+        Option4 = opts.Count > 3 ? opts[3] : "";
 
         HasAnswered = false;
         IsCorrect = false;
@@ -142,6 +168,11 @@ public partial class QuizViewModel : ObservableObject
 
         var question = _questions[_currentQuestionIndex];
         IsCorrect = option == question.CorrectAnswer;
+
+        Option1Selected = option == Option1 ? (IsCorrect ? "Correct" : "Wrong") : (Option1 == question.CorrectAnswer ? "Correct" : null);
+        Option2Selected = option == Option2 ? (IsCorrect ? "Correct" : "Wrong") : (Option2 == question.CorrectAnswer ? "Correct" : null);
+        Option3Selected = option == Option3 ? (IsCorrect ? "Correct" : "Wrong") : (Option3 == question.CorrectAnswer ? "Correct" : null);
+        Option4Selected = option == Option4 ? (IsCorrect ? "Correct" : "Wrong") : (Option4 == question.CorrectAnswer ? "Correct" : null);
 
         if (IsCorrect)
         {
