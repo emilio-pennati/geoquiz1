@@ -6,7 +6,7 @@ public class QuizQuestion
     public List<string> Options { get; set; } = new();
     public string CorrectAnswer { get; set; } = string.Empty;
     public QuizType Type { get; set; }
-    public Country? Country { get; set; }
+    public CountryDto? Country { get; set; }
 }
 
 public enum QuizType

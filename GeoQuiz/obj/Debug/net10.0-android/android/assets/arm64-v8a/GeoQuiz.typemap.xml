@@ -1,4 +1,4 @@
-<api type="debug" assembly-name="GeoQuiz" mvid="84b80c399af54bf58df82595f4af1d3b">
+<api type="debug" assembly-name="GeoQuiz" mvid="12d00a86597449aeac382fcf7c265667">
   <java-to-managed>
     <entry java-name="crc64605b9be28e665a9b/MainActivity" managed-name="GeoQuiz.MainActivity, GeoQuiz" managed-type-token-id="33554443" />
     <entry java-name="crc64605b9be28e665a9b/MainApplication" managed-name="GeoQuiz.MainApplication, GeoQuiz" managed-type-token-id="33554444" />

@@ -4,7 +4,7 @@ namespace GeoQuiz.Services;
 
 public interface IQuizService
 {
-    List<QuizQuestion> GenerateQuiz(List<Country> countries, int questionCount, QuizType type, string? regionFilter = null);
+    List<QuizQuestion> GenerateQuiz(List<CountryDto> countries, int questionCount, QuizType type, string? regionFilter = null);
     List<string> ShuffleOptions(List<string> options);
 }
 
@@ -12,7 +12,7 @@ public class QuizService : IQuizService
 {
     private readonly Random _random = new();
 
-    public List<QuizQuestion> GenerateQuiz(List<Country> countries, int questionCount, QuizType type, string? regionFilter = null)
+    public List<QuizQuestion> GenerateQuiz(List<CountryDto> countries, int questionCount, QuizType type, string? regionFilter = null)
     {
         var filteredCountries = string.IsNullOrEmpty(regionFilter)
             ? countries
@@ -43,7 +43,7 @@ public class QuizService : IQuizService
         return questions;
     }
 
-    private QuizQuestion GenerateCapitalQuestion(Country country, List<Country> allCountries)
+    private QuizQuestion GenerateCapitalQuestion(CountryDto country, List<CountryDto> allCountries)
     {
         var correctAnswer = country.CapitalCity ?? "N/A";
         var wrongAnswers = allCountries
@@ -65,7 +65,7 @@ public class QuizService : IQuizService
         };
     }
 
-    private QuizQuestion GenerateFlagQuestion(Country country, List<Country> allCountries)
+    private QuizQuestion GenerateFlagQuestion(CountryDto country, List<CountryDto> allCountries)
     {
         var correctAnswer = country.CommonName;
         var wrongAnswers = allCountries
@@ -87,7 +87,7 @@ public class QuizService : IQuizService
         };
     }
 
-    private QuizQuestion GenerateContinentQuestion(Country country, List<Country> allCountries)
+    private QuizQuestion GenerateContinentQuestion(CountryDto country, List<CountryDto> allCountries)
     {
         var correctAnswer = country.Continents?.FirstOrDefault() ?? country.Region;
         var continents = new List<string> { "Africa", "Asia", "Europe", "North America", "South America", "Oceania", "Antarctica" };
@@ -109,7 +109,7 @@ public class QuizService : IQuizService
         };
     }
 
-    private QuizQuestion GenerateLanguageQuestion(Country country, List<Country> allCountries)
+    private QuizQuestion GenerateLanguageQuestion(CountryDto country, List<CountryDto> allCountries)
     {
         var correctAnswer = country.LanguagesList;
         var wrongAnswers = allCountries

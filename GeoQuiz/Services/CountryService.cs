@@ -4,14 +4,6 @@ using GeoQuiz.Models;
 
 namespace GeoQuiz.Services;
 
-public interface ICountryService
-{
-    Task<List<Country>> GetAllCountriesAsync();
-    Task<List<Country>> SearchByNameAsync(string name);
-    Task<List<Country>> GetByRegionAsync(string region);
-    Task<Country?> GetByCodeAsync(string code);
-}
-
 public class CountryService : ICountryService
 {
     private readonly HttpClient _httpClient;
@@ -21,6 +13,9 @@ public class CountryService : ICountryService
         PropertyNameCaseInsensitive = true
     };
 
+    private List<CountryDto>? _cachedCountries;
+    private readonly SemaphoreSlim _cacheLock = new(1, 1);
+
     public CountryService()
     {
         _httpClient = new HttpClient
@@ -29,93 +24,96 @@ public class CountryService : ICountryService
         };
     }
 
-    public async Task<List<Country>> GetAllCountriesAsync()
+    public async Task<List<CountryDto>> GetAllCountriesAsync()
     {
+        await _cacheLock.WaitAsync();
         try
         {
-            var response = await _httpClient.GetStringAsync($"{BaseUrl}/all?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders");
-            return JsonSerializer.Deserialize<List<Country>>(response, JsonOptions) ?? new List<Country>();
+            if (_cachedCountries != null)
+            {
+                return _cachedCountries;
+            }
+
+            try
+            {
+                var response = await _httpClient.GetStringAsync(
+                    $"{BaseUrl}/all?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders,currencies");
+                _cachedCountries = JsonSerializer.Deserialize<List<CountryDto>>(response, JsonOptions) ?? new List<CountryDto>();
+                return _cachedCountries;
+            }
+            catch (HttpRequestException)
+            {
+                if (_cachedCountries != null)
+                {
+                    return _cachedCountries;
+                }
+                throw new Exception("Unable to reach the server. Please check your internet connection.");
+            }
+            catch (TaskCanceledException)
+            {
+                if (_cachedCountries != null)
+                {
+                    return _cachedCountries;
+                }
+                throw new Exception("The request timed out. Please try again.");
+            }
+            catch (JsonException)
+            {
+                throw new Exception("Received malformed data from the service.");
+            }
         }
-        catch (HttpRequestException)
+        finally
         {
-            throw new Exception("Unable to reach the server. Please check your internet connection.");
-        }
-        catch (TaskCanceledException)
-        {
-            throw new Exception("The request timed out. Please try again.");
-        }
-        catch (JsonException)
-        {
-            throw new Exception("Received malformed data from the service.");
+            _cacheLock.Release();
         }
     }
 
-    public async Task<List<Country>> SearchByNameAsync(string name)
+    public async Task<List<CountryDto>> SearchByNameAsync(string name)
     {
+        var allCountries = await GetCachedOrAllAsync();
+        
         if (string.IsNullOrWhiteSpace(name))
         {
+            return allCountries;
+        }
+
+        return allCountries.Where(c => 
+            c.CommonName.Contains(name, StringComparison.OrdinalIgnoreCase) ||
+            (c.OfficialName?.Contains(name, StringComparison.OrdinalIgnoreCase) ?? false)
+        ).ToList();
+    }
+
+    public async Task<List<CountryDto>> GetByRegionAsync(string region)
+    {
+        var allCountries = await GetCachedOrAllAsync();
+        
+        return allCountries.Where(c => 
+            c.Region.Equals(region, StringComparison.OrdinalIgnoreCase)
+        ).ToList();
+    }
+
+    public async Task<CountryDto?> GetByCodeAsync(string code)
+    {
+        var allCountries = await GetCachedOrAllAsync();
+        return allCountries.FirstOrDefault(c => 
+            c.Code.Equals(code, StringComparison.OrdinalIgnoreCase)
+        );
+    }
+
+    private async Task<List<CountryDto>> GetCachedOrAllAsync()
+    {
+        await _cacheLock.WaitAsync();
+        try
+        {
+            if (_cachedCountries != null)
+            {
+                return _cachedCountries;
+            }
             return await GetAllCountriesAsync();
         }
-
-        try
+        finally
         {
-            var response = await _httpClient.GetStringAsync($"{BaseUrl}/name/{Uri.EscapeDataString(name)}?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders");
-            return JsonSerializer.Deserialize<List<Country>>(response, JsonOptions) ?? new List<Country>();
-        }
-        catch (HttpRequestException)
-        {
-            throw new Exception("Unable to reach the server. Please check your internet connection.");
-        }
-        catch (TaskCanceledException)
-        {
-            throw new Exception("The request timed out. Please try again.");
-        }
-        catch (JsonException)
-        {
-            throw new Exception("Received malformed data from the service.");
-        }
-    }
-
-    public async Task<List<Country>> GetByRegionAsync(string region)
-    {
-        try
-        {
-            var response = await _httpClient.GetStringAsync($"{BaseUrl}/region/{region}?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders");
-            return JsonSerializer.Deserialize<List<Country>>(response, JsonOptions) ?? new List<Country>();
-        }
-        catch (HttpRequestException)
-        {
-            throw new Exception("Unable to reach the server. Please check your internet connection.");
-        }
-        catch (TaskCanceledException)
-        {
-            throw new Exception("The request timed out. Please try again.");
-        }
-        catch (JsonException)
-        {
-            throw new Exception("Received malformed data from the service.");
-        }
-    }
-
-    public async Task<Country?> GetByCodeAsync(string code)
-    {
-        try
-        {
-            var response = await _httpClient.GetStringAsync($"{BaseUrl}/alpha/{code}?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders");
-            var result = JsonSerializer.Deserialize<List<Country>>(response, JsonOptions);
-            return result?.FirstOrDefault();
-        }
-        catch (HttpRequestException)
-        {
-            throw new Exception("Unable to reach the server. Please check your internet connection.");
-        }
-        catch (TaskCanceledException)
-        {
-            throw new Exception("The request timed out. Please try again.");
-        }
-        catch (JsonException)
-        {
-            throw new Exception("Received malformed data from the service.");
+            _cacheLock.Release();
         }
     }
 }

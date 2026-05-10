@@ -2,13 +2,13 @@ using System.Text.Json.Serialization;
 
 namespace GeoQuiz.Models;
 
-public class Country
+public class CountryDto
 {
     [JsonPropertyName("cca2")]
     public string Code { get; set; } = string.Empty;
 
     [JsonPropertyName("name")]
-    public CountryName Name { get; set; } = new();
+    public CountryNameDto Name { get; set; } = new();
 
     [JsonPropertyName("capital")]
     public List<string>? Capital { get; set; }
@@ -26,7 +26,10 @@ public class Country
     public Dictionary<string, string>? Languages { get; set; }
 
     [JsonPropertyName("flags")]
-    public CountryFlag Flags { get; set; } = new();
+    public FlagDto Flags { get; set; } = new();
+
+    [JsonPropertyName("currencies")]
+    public Dictionary<string, CurrencyDto>? Currencies { get; set; }
 
     [JsonPropertyName("timezones")]
     public List<string>? Timezones { get; set; }
@@ -44,10 +47,13 @@ public class Country
     public string LanguagesList => Languages?.Values != null 
         ? string.Join(", ", Languages.Values) 
         : "N/A";
+    public string CurrenciesList => Currencies?.Values != null 
+        ? string.Join(", ", Currencies.Values.Select(c => c.Name)) 
+        : "N/A";
     public string PopulationFormatted => Population.ToString("N0");
 }
 
-public class CountryName
+public class CountryNameDto
 {
     [JsonPropertyName("common")]
     public string Common { get; set; } = string.Empty;
@@ -56,7 +62,7 @@ public class CountryName
     public string? Official { get; set; }
 }
 
-public class CountryFlag
+public class FlagDto
 {
     [JsonPropertyName("png")]
     public string? Png { get; set; }
@@ -66,4 +72,13 @@ public class CountryFlag
 
     [JsonPropertyName("alt")]
     public string? Alt { get; set; }
+}
+
+public class CurrencyDto
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("symbol")]
+    public string? Symbol { get; set; }
 }
