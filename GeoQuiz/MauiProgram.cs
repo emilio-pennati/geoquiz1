@@ -23,7 +23,9 @@ public static class MauiProgram
 			.AddTransient<SearchViewModel>()
 			.AddTransient<SearchPage>()
 			.AddTransient<CountryDetailViewModel>()
-			.AddTransient<CountryDetailPage>();
+			.AddTransient<CountryDetailPage>()
+			.AddTransient<QuizViewModel>()
+			.AddTransient<QuizPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
