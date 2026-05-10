@@ -1,0 +1,14 @@
+# Build outputs
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS folders
+.vs/
+
+# IDE
+.idea/
+*.suo
+*.cache
