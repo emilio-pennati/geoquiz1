@@ -17,6 +17,7 @@
 
             <CollectionView ItemsSource="{Binding Countries}"
                             SelectionMode="Single"
+                            SelectionChanged="OnCountrySelected"
                             Margin="10">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="vm:CountryListItem">

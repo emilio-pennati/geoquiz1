@@ -50,6 +50,9 @@ public class CountryDto
     public string CurrenciesList => Currencies?.Values != null 
         ? string.Join(", ", Currencies.Values.Select(c => c.Name)) 
         : "N/A";
+    public string ContinentsList => Continents != null 
+        ? string.Join(", ", Continents) 
+        : "N/A";
     public string PopulationFormatted => Population.ToString("N0");
 }
 

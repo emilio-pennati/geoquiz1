@@ -21,7 +21,9 @@ public static class MauiProgram
 			.AddSingleton<ICountryService, CountryService>()
 			.AddSingleton<IQuizService, QuizService>()
 			.AddTransient<SearchViewModel>()
-			.AddTransient<SearchPage>();
+			.AddTransient<SearchPage>()
+			.AddTransient<CountryDetailViewModel>()
+			.AddTransient<CountryDetailPage>();
 
 #if DEBUG
 		builder.Logging.AddDebug();
