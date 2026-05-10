@@ -1,9 +1,159 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:GeoQuiz.ViewModels"
              x:Class="GeoQuiz.Views.QuizPage"
+             x:DataType="vm:QuizViewModel"
              Title="Quiz">
-    <VerticalStackLayout>
-        <Label Text="Quiz Page" FontSize="24" HorizontalOptions="Center" Margin="0,50,0,0"/>
-    </VerticalStackLayout>
+
+    <Grid>
+        <ScrollView>
+            <VerticalStackLayout Margin="15" Spacing="20">
+                <!-- Start Screen -->
+                <VerticalStackLayout IsVisible="{Binding IsQuizActive, Converter={StaticResource InverseBoolConverter}}"
+                                     Spacing="20" Margin="0,50,0,0">
+                    <Label Text="Geography Quiz"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                    <Frame BackgroundColor="#F5F5F5" CornerRadius="15" Padding="15">
+                        <VerticalStackLayout>
+                            <Label Text="Quiz Type:" FontAttributes="Bold"/>
+                            <Picker SelectedIndex="0" IsEnabled="False">
+                                <Picker.Items>
+                                    <x:String>Capital Cities</x:String>
+                                </Picker.Items>
+                            </Picker>
+
+                            <Label Text="Number of Questions:" FontAttributes="Bold" Margin="0,10,0,0"/>
+                            <Label Text="10" HorizontalOptions="Center"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Button Text="Start Quiz"
+                            Command="{Binding StartQuizCommand}"
+                            FontSize="18"
+                            HeightRequest="50"
+                            BackgroundColor="DarkBlue"
+                            TextColor="White"/>
+
+                    <Label Text="{Binding ErrorMessage}"
+                           TextColor="Red"
+                           IsVisible="{Binding ErrorMessage, Converter={StaticResource StringToBoolConverter}}"
+                           HorizontalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <!-- Quiz Active -->
+                <VerticalStackLayout IsVisible="{Binding IsQuizActive}" Spacing="15">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Label Text="{Binding CurrentQuestionNumber, StringFormat='Question {0}'}"
+                               FontSize="16"/>
+                        
+                        <Label Grid.Column="1"
+                               Text="{Binding Score, StringFormat='Score: {0}'}"
+                               FontSize="16"
+                               FontAttributes="Bold"/>
+                    </Grid>
+
+                    <ProgressBar Progress="{Binding CurrentQuestionNumber, Converter={StaticResource ProgressConverter}}"
+                                 HeightRequest="10"/>
+
+                    <Frame CornerRadius="15" Padding="15" IsVisible="{Binding ShowQuestionImage}">
+                        <Image Source="{Binding QuestionImageUrl}"
+                               HeightRequest="150"
+                               Aspect="AspectFit"/>
+                    </Frame>
+
+                    <Label Text="{Binding QuestionText}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           Margin="0,10,0,0"/>
+
+                    <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
+                        <Button Text="{Binding Options[0]}"
+                                Command="{Binding SubmitAnswerCommand}"
+                                CommandParameter="{Binding Options[0]}"
+                                IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
+                                BackgroundColor="#E0E0E0"
+                                HeightRequest="50"/>
+
+                        <Button Text="{Binding Options[1]}"
+                                Command="{Binding SubmitAnswerCommand}"
+                                CommandParameter="{Binding Options[1]}"
+                                IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
+                                BackgroundColor="#E0E0E0"
+                                HeightRequest="50"/>
+
+                        <Button Text="{Binding Options[2]}"
+                                Command="{Binding SubmitAnswerCommand}"
+                                CommandParameter="{Binding Options[2]}"
+                                IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
+                                BackgroundColor="#E0E0E0"
+                                HeightRequest="50"/>
+
+                        <Button Text="{Binding Options[3]}"
+                                Command="{Binding SubmitAnswerCommand}"
+                                CommandParameter="{Binding Options[3]}"
+                                IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
+                                BackgroundColor="#E0E0E0"
+                                HeightRequest="50"/>
+                    </VerticalStackLayout>
+
+                    <Label IsVisible="{Binding HasAnswered}"
+                           Text="{Binding IsCorrect, Converter={StaticResource ResultConverter}}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"
+                           Margin="0,15,0,0"/>
+                </VerticalStackLayout>
+
+                <!-- Quiz Complete -->
+                <VerticalStackLayout IsVisible="{Binding IsQuizComplete}"
+                                     Spacing="20" Margin="0,50,0,0">
+                    <Label Text="Quiz Complete!"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                    <Frame BackgroundColor="#E8F5E9" CornerRadius="15" Padding="20">
+                        <VerticalStackLayout HorizontalOptions="Center">
+                            <Label Text="{Binding CorrectAnswers, StringFormat='Correct Answers: {0}'}"
+                                   FontSize="20"
+                                   HorizontalOptions="Center"/>
+                            
+                            <Label Text="{Binding TotalQuestions, StringFormat='out of {0}'}"
+                                   FontSize="16"
+                                   HorizontalOptions="Center"/>
+                            
+                            <Label Text="{Binding Score, StringFormat='Score: {0} points'}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   TextColor="DarkGreen"
+                                   HorizontalOptions="Center"
+                                   Margin="0,15,0,0"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Button Text="Play Again"
+                            Command="{Binding RestartQuizCommand}"
+                            FontSize="18"
+                            HeightRequest="50"
+                            BackgroundColor="DarkBlue"
+                            TextColor="White"/>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <ActivityIndicator IsVisible="{Binding IsLoading}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           WidthRequest="50"
+                           HeightRequest="50"/>
+    </Grid>
 </ContentPage>
