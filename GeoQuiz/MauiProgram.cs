@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using GeoQuiz.ViewModels;
 using GeoQuiz.Views;
+using GeoQuiz.Services;
 
 namespace GeoQuiz;
 
@@ -17,6 +18,8 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			})
 			.Services
+			.AddSingleton<ICountryService, CountryService>()
+			.AddSingleton<IQuizService, QuizService>()
 			.AddTransient<SearchViewModel>()
 			.AddTransient<SearchPage>();
 

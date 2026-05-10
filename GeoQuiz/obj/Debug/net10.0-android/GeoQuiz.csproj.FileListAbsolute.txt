@@ -118,3 +118,5 @@ C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.AssemblyInfoI
 C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.AssemblyInfo.cs
 C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.csproj.CoreCompileInputs.cache
 C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.sourcelink.json
+C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.dll
+C:\Users\emilio\geoquiz1\GeoQuiz\obj\Debug\net10.0-android\GeoQuiz.pdb
