@@ -18,9 +18,11 @@ public class CountryService : ICountryService
 
     public CountryService()
     {
-        _httpClient = new HttpClient
+        var handler = new HttpClientHandler();
+        
+        _httpClient = new HttpClient(handler)
         {
-            Timeout = TimeSpan.FromSeconds(10)
+            Timeout = TimeSpan.FromSeconds(30)
         };
     }
 
@@ -36,30 +38,18 @@ public class CountryService : ICountryService
 
             try
             {
-                var response = await _httpClient.GetStringAsync(
-                    $"{BaseUrl}/all?fields=name,cca2,capital,region,subregion,population,languages,flags,timezones,continents,borders,currencies");
-                _cachedCountries = JsonSerializer.Deserialize<List<CountryDto>>(response, JsonOptions) ?? new List<CountryDto>();
+                var url = $"{BaseUrl}/all?fields=name,cca2,capital,region,subregion,population,languages,flags,continents,currencies";
+                
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
+                
+                var content = await response.Content.ReadAsStringAsync();
+                _cachedCountries = JsonSerializer.Deserialize<List<CountryDto>>(content, JsonOptions) ?? new List<CountryDto>();
                 return _cachedCountries;
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                if (_cachedCountries != null)
-                {
-                    return _cachedCountries;
-                }
-                throw new Exception("Unable to reach the server. Please check your internet connection.");
-            }
-            catch (TaskCanceledException)
-            {
-                if (_cachedCountries != null)
-                {
-                    return _cachedCountries;
-                }
-                throw new Exception("The request timed out. Please try again.");
-            }
-            catch (JsonException)
-            {
-                throw new Exception("Received malformed data from the service.");
+                throw new Exception($"Failed to fetch countries: {ex.Message}");
             }
         }
         finally

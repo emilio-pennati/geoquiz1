@@ -4,8 +4,71 @@
              xmlns:vm="clr-namespace:GeoQuiz.ViewModels"
              x:Class="GeoQuiz.Views.SearchPage"
              x:DataType="vm:SearchViewModel"
-             Title="Search">
-    <VerticalStackLayout>
-        <Label Text="Search Page" FontSize="24" HorizontalOptions="Center" Margin="0,50,0,0"/>
-    </VerticalStackLayout>
+             Title="Search Countries"
+             Loaded="ContentPage_Loaded">
+
+    <Grid>
+        <VerticalStackLayout>
+            <SearchBar x:Name="searchBar"
+                       SearchCommand="{Binding SearchCommand}"
+                       Text="{Binding SearchText, Mode=TwoWay}"
+                       Placeholder="Search countries..."
+                       Margin="10"/>
+
+            <CollectionView ItemsSource="{Binding Countries}"
+                            SelectionMode="Single"
+                            Margin="10">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CountryListItem">
+                        <Frame Margin="0,5" Padding="10" CornerRadius="10">
+                            <Grid ColumnDefinitions="Auto,*,Auto">
+                                <Image Source="{Binding FlagUrl}"
+                                       WidthRequest="40"
+                                       HeightRequest="30"
+                                       Aspect="AspectFit"
+                                       Margin="0,0,10,0"/>
+
+                                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" FontSize="16" FontAttributes="Bold"/>
+                                    <Label Text="{Binding Capital}" FontSize="12" TextColor="Gray"/>
+                                </VerticalStackLayout>
+
+                                <Label Grid.Column="2"
+                                       Text="{Binding Region}"
+                                       FontSize="12"
+                                       TextColor="Gray"
+                                       VerticalOptions="Center"/>
+                            </Grid>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </VerticalStackLayout>
+
+        <ActivityIndicator IsVisible="{Binding IsBusy}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           WidthRequest="50"
+                           HeightRequest="50"/>
+
+        <VerticalStackLayout IsVisible="{Binding HasError}"
+                             HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Margin="20">
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   FontSize="16"
+                   HorizontalTextAlignment="Center"/>
+            <Button Text="Retry"
+                    Command="{Binding LoadCommand}"
+                    Margin="0,10,0,0"/>
+        </VerticalStackLayout>
+
+        <Label IsVisible="{Binding IsEmptyState}"
+               Text="No countries found"
+               FontSize="16"
+               TextColor="Gray"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"/>
+    </Grid>
 </ContentPage>
