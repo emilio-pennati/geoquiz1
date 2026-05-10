@@ -20,14 +20,10 @@
                     <Frame BackgroundColor="#F5F5F5" CornerRadius="15" Padding="15">
                         <VerticalStackLayout>
                             <Label Text="Quiz Type:" FontAttributes="Bold"/>
-                            <Picker SelectedIndex="0" IsEnabled="False">
-                                <Picker.Items>
-                                    <x:String>Capital Cities</x:String>
-                                </Picker.Items>
-                            </Picker>
+                            <Label Text="Capital Cities" FontSize="16" Margin="0,5,0,10"/>
 
-                            <Label Text="Number of Questions:" FontAttributes="Bold" Margin="0,10,0,0"/>
-                            <Label Text="10" HorizontalOptions="Center"/>
+                            <Label Text="Number of Questions:" FontAttributes="Bold"/>
+                            <Label Text="10" FontSize="16" HorizontalOptions="Center"/>
                         </VerticalStackLayout>
                     </Frame>
 
@@ -76,32 +72,36 @@
                            Margin="0,10,0,0"/>
 
                     <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
-                        <Button Text="{Binding Options[0]}"
+                        <Button Text="{Binding Option1}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[0]}"
+                                CommandParameter="{Binding Option1}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option1Selected, Converter={StaticResource AnswerBackgroundConverter}}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[1]}"
+                        <Button Text="{Binding Option2}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[1]}"
+                                CommandParameter="{Binding Option2}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option2Selected, Converter={StaticResource AnswerBackgroundConverter}}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[2]}"
+                        <Button Text="{Binding Option3}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[2]}"
+                                CommandParameter="{Binding Option3}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option3Selected, Converter={StaticResource AnswerBackgroundConverter}}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[3]}"
+                        <Button Text="{Binding Option4}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[3]}"
+                                CommandParameter="{Binding Option4}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option4Selected, Converter={StaticResource AnswerBackgroundConverter}}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
                     </VerticalStackLayout>
 
