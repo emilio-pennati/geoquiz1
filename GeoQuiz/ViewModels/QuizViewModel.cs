@@ -1,71 +1,153 @@
 using System.Collections.ObjectModel;
+using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GeoQuiz.Models;
 using GeoQuiz.Services;
+using Timer = System.Timers.Timer;
 
 namespace GeoQuiz.ViewModels;
 
 public partial class QuizViewModel : ObservableObject
 {
-    private readonly IQuizService _quizService;
-    private readonly ICountryService _countryService;
-    private List<CountryDto> _allCountries = new();
-    private List<QuizQuestion> _questions = new();
-    private int _currentQuestionIndex;
+    private readonly IQuizService quizService;
+    private readonly ICountryService countryService;
+    private Timer? timer;
+    private List<CountryDto> allCountries = new();
+    private List<QuizQuestion> questions = new();
+    private int currentQuestionIndex;
 
     [ObservableProperty]
-    private bool _isLoading;
+    private bool isLoading;
 
     [ObservableProperty]
-    private bool _isQuizActive;
+    private bool isQuizActive;
 
     [ObservableProperty]
-    private bool _isQuizComplete;
+    private bool isQuizComplete;
 
     [ObservableProperty]
-    private string? _errorMessage;
+    private string? errorMessage;
 
     [ObservableProperty]
-    private int _currentQuestionNumber;
+    private int currentQuestionNumber;
 
     [ObservableProperty]
-    private int _totalQuestions = 10;
+    private int totalQuestions = 10;
 
     [ObservableProperty]
-    private string _questionText = string.Empty;
+    private string questionText = string.Empty;
 
     [ObservableProperty]
-    private string? _questionImageUrl;
+    private string? questionImageUrl;
 
     [ObservableProperty]
-    private bool _showQuestionImage;
+    private bool showQuestionImage;
 
     [ObservableProperty]
-    private ObservableCollection<string> _options = new();
+    private ObservableCollection<string> options = new();
 
     [ObservableProperty]
-    private string? _selectedOption;
+    private string option1 = string.Empty;
 
     [ObservableProperty]
-    private bool _hasAnswered;
+    private string option2 = string.Empty;
 
     [ObservableProperty]
-    private bool _isCorrect;
+    private string option3 = string.Empty;
 
     [ObservableProperty]
-    private int _score;
+    private string option4 = string.Empty;
 
     [ObservableProperty]
-    private int _correctAnswers;
+    private string option1Background = "#E0E0E0";
 
     [ObservableProperty]
-    private QuizType _currentQuizType = QuizType.Capital;
+    private string option2Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string option3Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string option4Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string? selectedOption;
+
+    [ObservableProperty]
+    private bool hasAnswered;
+
+    [ObservableProperty]
+    private bool isCorrect;
+
+    [ObservableProperty]
+    private int score;
+
+    [ObservableProperty]
+    private int correctAnswers;
+
+    [ObservableProperty]
+    private QuizType currentQuizType = QuizType.Capital;
+
+    [ObservableProperty]
+    private bool isTimedMode;
+
+    [ObservableProperty]
+    private int questionTimeLimit = 15;
+
+    [ObservableProperty]
+    private int questionTimeRemaining;
+
+    [ObservableProperty]
+    private bool isTimeUp;
 
     public QuizViewModel(IQuizService quizService, ICountryService countryService)
     {
-        _quizService = quizService;
-        _countryService = countryService;
+        this.quizService = quizService;
+        this.countryService = countryService;
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        if (QuestionTimeRemaining > 0)
+        {
+            QuestionTimeRemaining--;
+        }
+        else
+        {
+            timer?.Stop();
+            HandleTimeout();
+        }
+    }
+
+    private void HandleTimeout()
+    {
+        if (!HasAnswered && IsQuizActive)
+        {
+            IsTimeUp = true;
+            HasAnswered = true;
+            SelectedOption = null;
+        }
+    }
+
+    private void StartTimer()
+    {
+        if (IsTimedMode)
+        {
+            timer?.Stop();
+            timer = new Timer(1000);
+            timer.Elapsed += OnTimerElapsed;
+            QuestionTimeRemaining = QuestionTimeLimit;
+            IsTimeUp = false;
+            timer.Start();
+        }
+    }
+
+    private void StopTimer()
+    {
+        timer?.Stop();
+        timer?.Dispose();
+        timer = null;
     }
 
     [RelayCommand]
@@ -78,22 +160,23 @@ public partial class QuizViewModel : ObservableObject
 
         try
         {
-            _allCountries = await _countryService.GetAllCountriesAsync();
+            allCountries = await countryService.GetAllCountriesAsync();
             
-            if (_allCountries.Count < 4)
+            if (allCountries.Count < 4)
             {
                 ErrorMessage = "Not enough countries to start quiz";
                 return;
             }
 
-            _questions = _quizService.GenerateQuiz(_allCountries, TotalQuestions, CurrentQuizType);
-            _currentQuestionIndex = 0;
+            questions = quizService.GenerateQuiz(allCountries, TotalQuestions, CurrentQuizType);
+            currentQuestionIndex = 0;
             Score = 0;
             CorrectAnswers = 0;
             IsQuizActive = true;
             IsQuizComplete = false;
             
             LoadCurrentQuestion();
+            StartTimer();
         }
         catch (Exception ex)
         {
@@ -107,60 +190,91 @@ public partial class QuizViewModel : ObservableObject
 
     private void LoadCurrentQuestion()
     {
-        if (_currentQuestionIndex >= _questions.Count)
+        StopTimer();
+
+        if (currentQuestionIndex >= questions.Count)
         {
             IsQuizActive = false;
             IsQuizComplete = true;
             return;
         }
 
-        var question = _questions[_currentQuestionIndex];
-        CurrentQuestionNumber = _currentQuestionIndex + 1;
+        var question = questions[currentQuestionIndex];
+        CurrentQuestionNumber = currentQuestionIndex + 1;
         QuestionText = question.QuestionText;
         
         ShowQuestionImage = question.Type == QuizType.Flag;
         QuestionImageUrl = question.Country?.FlagUrl;
         
-        Options.Clear();
-        foreach (var option in question.Options)
+        if (question.Options.Count >= 4)
         {
-            Options.Add(option);
+            Option1 = question.Options[0];
+            Option2 = question.Options[1];
+            Option3 = question.Options[2];
+            Option4 = question.Options[3];
         }
+
+        Option1Background = "#E0E0E0";
+        Option2Background = "#E0E0E0";
+        Option3Background = "#E0E0E0";
+        Option4Background = "#E0E0E0";
 
         HasAnswered = false;
         IsCorrect = false;
         SelectedOption = null;
+        IsTimeUp = false;
+
+        StartTimer();
     }
 
     [RelayCommand]
     private async Task SubmitAnswerAsync(string option)
     {
-        if (HasAnswered || _currentQuestionIndex >= _questions.Count) return;
+        if (HasAnswered || currentQuestionIndex >= questions.Count) return;
+
+        StopTimer();
 
         SelectedOption = option;
         HasAnswered = true;
 
-        var question = _questions[_currentQuestionIndex];
+        var question = questions[currentQuestionIndex];
         IsCorrect = option == question.CorrectAnswer;
+
+        string correctBg = "#90EE90";
+        string wrongBg = "#FF6B6B";
+
+        if (Option1 == question.CorrectAnswer) Option1Background = correctBg;
+        else if (Option1 == option && !IsCorrect) Option1Background = wrongBg;
+
+        if (Option2 == question.CorrectAnswer) Option2Background = correctBg;
+        else if (Option2 == option && !IsCorrect) Option2Background = wrongBg;
+
+        if (Option3 == question.CorrectAnswer) Option3Background = correctBg;
+        else if (Option3 == option && !IsCorrect) Option3Background = wrongBg;
+
+        if (Option4 == question.CorrectAnswer) Option4Background = correctBg;
+        else if (Option4 == option && !IsCorrect) Option4Background = wrongBg;
 
         if (IsCorrect)
         {
-            Score += 10;
+            int timeBonus = IsTimedMode ? QuestionTimeRemaining : 0;
+            Score += 10 + timeBonus;
             CorrectAnswers++;
         }
 
         await Task.Delay(1500);
         
-        _currentQuestionIndex++;
+        currentQuestionIndex++;
         LoadCurrentQuestion();
     }
 
     [RelayCommand]
     private void RestartQuiz()
     {
+        StopTimer();
         IsQuizActive = false;
         IsQuizComplete = false;
-        _currentQuestionIndex = 0;
+        currentQuestionIndex = 0;
         Score = 0;
         CorrectAnswers = 0;
     }

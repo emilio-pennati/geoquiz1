@@ -6,21 +6,21 @@ namespace GeoQuiz.Services;
 
 public class CountryService : ICountryService
 {
-    private readonly HttpClient _httpClient;
+    private readonly HttpClient httpClient;
     private const string BaseUrl = "https://restcountries.com/v3.1";
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true
     };
 
-    private List<CountryDto>? _cachedCountries;
-    private readonly SemaphoreSlim _cacheLock = new(1, 1);
+    private List<CountryDto>? cachedCountries;
+    private readonly SemaphoreSlim cacheLock = new(1, 1);
 
     public CountryService()
     {
         var handler = new HttpClientHandler();
         
-        _httpClient = new HttpClient(handler)
+        httpClient = new HttpClient(handler)
         {
             Timeout = TimeSpan.FromSeconds(30)
         };
@@ -28,24 +28,24 @@ public class CountryService : ICountryService
 
     public async Task<List<CountryDto>> GetAllCountriesAsync()
     {
-        await _cacheLock.WaitAsync();
+        await cacheLock.WaitAsync();
         try
         {
-            if (_cachedCountries != null)
+            if (cachedCountries != null)
             {
-                return _cachedCountries;
+                return cachedCountries;
             }
 
             try
             {
                 var url = $"{BaseUrl}/all?fields=name,cca2,capital,region,subregion,population,languages,flags,continents,currencies";
                 
-                var response = await _httpClient.GetAsync(url);
+                var response = await httpClient.GetAsync(url);
                 response.EnsureSuccessStatusCode();
                 
                 var content = await response.Content.ReadAsStringAsync();
-                _cachedCountries = JsonSerializer.Deserialize<List<CountryDto>>(content, JsonOptions) ?? new List<CountryDto>();
-                return _cachedCountries;
+                cachedCountries = JsonSerializer.Deserialize<List<CountryDto>>(content, JsonOptions) ?? new List<CountryDto>();
+                return cachedCountries;
             }
             catch (Exception ex)
             {
@@ -54,7 +54,7 @@ public class CountryService : ICountryService
         }
         finally
         {
-            _cacheLock.Release();
+            cacheLock.Release();
         }
     }
 
@@ -92,18 +92,18 @@ public class CountryService : ICountryService
 
     private async Task<List<CountryDto>> GetCachedOrAllAsync()
     {
-        await _cacheLock.WaitAsync();
+        await cacheLock.WaitAsync();
         try
         {
-            if (_cachedCountries != null)
+            if (cachedCountries != null)
             {
-                return _cachedCountries;
+                return cachedCountries;
             }
             return await GetAllCountriesAsync();
         }
         finally
         {
-            _cacheLock.Release();
+            cacheLock.Release();
         }
     }
 }

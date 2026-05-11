@@ -6,23 +6,23 @@ namespace GeoQuiz.ViewModels;
 
 public partial class CountryDetailViewModel : ObservableObject
 {
-    private readonly ICountryService _countryService;
+    private readonly ICountryService countryService;
 
     [ObservableProperty]
-    private CountryDto? _country;
+    private CountryDto? country;
 
     [ObservableProperty]
-    private bool _isBusy;
+    private bool isBusy;
 
     [ObservableProperty]
-    private string? _errorMessage;
+    private string? errorMessage;
 
     [ObservableProperty]
-    private bool _hasData;
+    private bool hasData;
 
     public CountryDetailViewModel(ICountryService countryService)
     {
-        _countryService = countryService;
+        this.countryService = countryService;
     }
 
     public async Task LoadCountryAsync(string code)
@@ -34,7 +34,7 @@ public partial class CountryDetailViewModel : ObservableObject
 
         try
         {
-            var country = await _countryService.GetByCodeAsync(code);
+            var country = await countryService.GetByCodeAsync(code);
             Country = country;
             HasData = country != null;
 

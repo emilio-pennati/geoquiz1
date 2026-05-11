@@ -10,7 +10,7 @@ public interface IQuizService
 
 public class QuizService : IQuizService
 {
-    private readonly Random _random = new();
+    private readonly Random random = new();
 
     public List<QuizQuestion> GenerateQuiz(List<CountryDto> countries, int questionCount, QuizType type, string? regionFilter = null)
     {
@@ -24,7 +24,7 @@ public class QuizService : IQuizService
         }
 
         var questions = new List<QuizQuestion>();
-        var shuffledCountries = filteredCountries.OrderBy(_ => _random.Next()).Take(questionCount).ToList();
+        var shuffledCountries = filteredCountries.OrderBy(_ => random.Next()).Take(questionCount).ToList();
 
         foreach (var country in shuffledCountries)
         {
@@ -49,7 +49,7 @@ public class QuizService : IQuizService
         var wrongAnswers = allCountries
             .Where(c => c.CapitalCity != null && c.CapitalCity != correctAnswer)
             .Select(c => c.CapitalCity!)
-            .OrderBy(_ => _random.Next())
+            .OrderBy(_ => random.Next())
             .Take(3)
             .ToList();
 
@@ -71,7 +71,7 @@ public class QuizService : IQuizService
         var wrongAnswers = allCountries
             .Where(c => c.CommonName != correctAnswer)
             .Select(c => c.CommonName)
-            .OrderBy(_ => _random.Next())
+            .OrderBy(_ => random.Next())
             .Take(3)
             .ToList();
 
@@ -93,7 +93,7 @@ public class QuizService : IQuizService
         var continents = new List<string> { "Africa", "Asia", "Europe", "North America", "South America", "Oceania", "Antarctica" };
         var wrongAnswers = continents
             .Where(c => c != correctAnswer)
-            .OrderBy(_ => _random.Next())
+            .OrderBy(_ => random.Next())
             .Take(3)
             .ToList();
 
@@ -116,7 +116,7 @@ public class QuizService : IQuizService
             .Where(c => c.LanguagesList != correctAnswer && c.LanguagesList != "N/A")
             .Select(c => c.LanguagesList)
             .Distinct()
-            .OrderBy(_ => _random.Next())
+            .OrderBy(_ => random.Next())
             .Take(3)
             .ToList();
 
@@ -134,6 +134,6 @@ public class QuizService : IQuizService
 
     public List<string> ShuffleOptions(List<string> options)
     {
-        return options.OrderBy(_ => _random.Next()).ToList();
+        return options.OrderBy(_ => random.Next()).ToList();
     }
 }

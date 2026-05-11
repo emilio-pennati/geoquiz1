@@ -28,6 +28,10 @@
 
                             <Label Text="Number of Questions:" FontAttributes="Bold" Margin="0,10,0,0"/>
                             <Label Text="10" HorizontalOptions="Center"/>
+
+                            <Label Text="Timed Mode:" FontAttributes="Bold" Margin="0,10,0,0"/>
+                            <Switch IsToggled="{Binding IsTimedMode, Mode=TwoWay}" HorizontalOptions="Start"/>
+                            <Label Text="15 seconds per question" FontSize="12" TextColor="Gray" IsVisible="{Binding IsTimedMode}"/>
                         </VerticalStackLayout>
                     </Frame>
 
@@ -50,6 +54,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         
                         <Label Text="{Binding CurrentQuestionNumber, StringFormat='Question {0}'}"
@@ -58,7 +63,19 @@
                         <Label Grid.Column="1"
                                Text="{Binding Score, StringFormat='Score: {0}'}"
                                FontSize="16"
-                               FontAttributes="Bold"/>
+                               FontAttributes="Bold"
+                               Margin="0,0,15,0"/>
+
+                        <Frame Grid.Column="2" 
+                               CornerRadius="20" 
+                               Padding="10,5"
+                               IsVisible="{Binding IsTimedMode}"
+                               BackgroundColor="{Binding QuestionTimeRemaining, Converter={StaticResource TimerColorConverter}}">
+                            <Label Text="{Binding QuestionTimeRemaining, StringFormat='{}{0}s'}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </Frame>
                     </Grid>
 
                     <ProgressBar Progress="{Binding CurrentQuestionNumber, Converter={StaticResource ProgressConverter}}"
@@ -76,32 +93,36 @@
                            Margin="0,10,0,0"/>
 
                     <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
-                        <Button Text="{Binding Options[0]}"
+                        <Button Text="{Binding Option1}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[0]}"
+                                CommandParameter="{Binding Option1}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option1Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[1]}"
+                        <Button Text="{Binding Option2}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[1]}"
+                                CommandParameter="{Binding Option2}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option2Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[2]}"
+                        <Button Text="{Binding Option3}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[2]}"
+                                CommandParameter="{Binding Option3}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option3Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[3]}"
+                        <Button Text="{Binding Option4}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[3]}"
+                                CommandParameter="{Binding Option4}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option4Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
                     </VerticalStackLayout>
 

@@ -14,6 +14,7 @@
             <converters:StringToBoolConverter x:Key="StringToBoolConverter"/>
             <converters:ResultConverter x:Key="ResultConverter"/>
             <converters:ProgressConverter x:Key="ProgressConverter"/>
+            <converters:TimerColorConverter x:Key="TimerColorConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
