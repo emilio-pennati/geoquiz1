@@ -93,30 +93,30 @@
                            Margin="0,10,0,0"/>
 
                     <VerticalStackLayout Spacing="10" Margin="0,20,0,0">
-                        <Button Text="{Binding Options[0]}"
+                        <Button Text="{Binding Option1}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[0]}"
+                                CommandParameter="{Binding Option1}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
                                 BackgroundColor="#E0E0E0"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[1]}"
+                        <Button Text="{Binding Option2}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[1]}"
+                                CommandParameter="{Binding Option2}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
                                 BackgroundColor="#E0E0E0"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[2]}"
+                        <Button Text="{Binding Option3}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[2]}"
+                                CommandParameter="{Binding Option3}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
                                 BackgroundColor="#E0E0E0"
                                 HeightRequest="50"/>
 
-                        <Button Text="{Binding Options[3]}"
+                        <Button Text="{Binding Option4}"
                                 Command="{Binding SubmitAnswerCommand}"
-                                CommandParameter="{Binding Options[3]}"
+                                CommandParameter="{Binding Option4}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
                                 BackgroundColor="#E0E0E0"
                                 HeightRequest="50"/>

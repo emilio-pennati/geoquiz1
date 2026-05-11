@@ -48,6 +48,18 @@ public partial class QuizViewModel : ObservableObject
     private ObservableCollection<string> options = new();
 
     [ObservableProperty]
+    private string option1 = string.Empty;
+
+    [ObservableProperty]
+    private string option2 = string.Empty;
+
+    [ObservableProperty]
+    private string option3 = string.Empty;
+
+    [ObservableProperty]
+    private string option4 = string.Empty;
+
+    [ObservableProperty]
     private string? selectedOption;
 
     [ObservableProperty]
@@ -182,10 +194,12 @@ public partial class QuizViewModel : ObservableObject
         ShowQuestionImage = question.Type == QuizType.Flag;
         QuestionImageUrl = question.Country?.FlagUrl;
         
-        Options.Clear();
-        foreach (var option in question.Options)
+        if (question.Options.Count >= 4)
         {
-            Options.Add(option);
+            Option1 = question.Options[0];
+            Option2 = question.Options[1];
+            Option3 = question.Options[2];
+            Option4 = question.Options[3];
         }
 
         HasAnswered = false;
