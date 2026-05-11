@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GeoQuiz.Models;
 using GeoQuiz.Services;
+using Timer = System.Timers.Timer;
 
 namespace GeoQuiz.ViewModels;
 
@@ -10,6 +12,7 @@ public partial class QuizViewModel : ObservableObject
 {
     private readonly IQuizService _quizService;
     private readonly ICountryService _countryService;
+    private Timer? _timer;
     private List<CountryDto> _allCountries = new();
     private List<QuizQuestion> _questions = new();
     private int _currentQuestionIndex;
@@ -62,10 +65,65 @@ public partial class QuizViewModel : ObservableObject
     [ObservableProperty]
     private QuizType _currentQuizType = QuizType.Capital;
 
+    [ObservableProperty]
+    private bool _isTimedMode;
+
+    [ObservableProperty]
+    private int _questionTimeLimit = 15;
+
+    [ObservableProperty]
+    private int _questionTimeRemaining;
+
+    [ObservableProperty]
+    private bool _isTimeUp;
+
     public QuizViewModel(IQuizService quizService, ICountryService countryService)
     {
         _quizService = quizService;
         _countryService = countryService;
+    }
+
+    private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
+    {
+        if (QuestionTimeRemaining > 0)
+        {
+            QuestionTimeRemaining--;
+        }
+        else
+        {
+            _timer?.Stop();
+            HandleTimeout();
+        }
+    }
+
+    private void HandleTimeout()
+    {
+        if (!HasAnswered && IsQuizActive)
+        {
+            IsTimeUp = true;
+            HasAnswered = true;
+            SelectedOption = null;
+        }
+    }
+
+    private void StartTimer()
+    {
+        if (IsTimedMode)
+        {
+            _timer?.Stop();
+            _timer = new Timer(1000);
+            _timer.Elapsed += OnTimerElapsed;
+            QuestionTimeRemaining = QuestionTimeLimit;
+            IsTimeUp = false;
+            _timer.Start();
+        }
+    }
+
+    private void StopTimer()
+    {
+        _timer?.Stop();
+        _timer?.Dispose();
+        _timer = null;
     }
 
     [RelayCommand]
@@ -94,6 +152,7 @@ public partial class QuizViewModel : ObservableObject
             IsQuizComplete = false;
             
             LoadCurrentQuestion();
+            StartTimer();
         }
         catch (Exception ex)
         {
@@ -107,6 +166,8 @@ public partial class QuizViewModel : ObservableObject
 
     private void LoadCurrentQuestion()
     {
+        StopTimer();
+
         if (_currentQuestionIndex >= _questions.Count)
         {
             IsQuizActive = false;
@@ -130,12 +191,17 @@ public partial class QuizViewModel : ObservableObject
         HasAnswered = false;
         IsCorrect = false;
         SelectedOption = null;
+        IsTimeUp = false;
+
+        StartTimer();
     }
 
     [RelayCommand]
     private async Task SubmitAnswerAsync(string option)
     {
         if (HasAnswered || _currentQuestionIndex >= _questions.Count) return;
+
+        StopTimer();
 
         SelectedOption = option;
         HasAnswered = true;
@@ -145,7 +211,8 @@ public partial class QuizViewModel : ObservableObject
 
         if (IsCorrect)
         {
-            Score += 10;
+            int timeBonus = IsTimedMode ? QuestionTimeRemaining : 0;
+            Score += 10 + timeBonus;
             CorrectAnswers++;
         }
 
@@ -158,6 +225,7 @@ public partial class QuizViewModel : ObservableObject
     [RelayCommand]
     private void RestartQuiz()
     {
+        StopTimer();
         IsQuizActive = false;
         IsQuizComplete = false;
         _currentQuestionIndex = 0;

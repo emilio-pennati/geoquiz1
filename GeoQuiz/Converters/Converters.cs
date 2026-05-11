@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Windows;
+using Microsoft.Maui.Graphics;
 
 namespace GeoQuiz.Converters;
 
@@ -47,6 +48,23 @@ public class ProgressConverter : IValueConverter
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         return value is int i ? i / 10.0 : 0;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public class TimerColorConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is int time)
+        {
+            return time <= 5 ? Colors.Red : (time <= 10 ? Colors.Orange : Colors.Green);
+        }
+        return Colors.Green;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

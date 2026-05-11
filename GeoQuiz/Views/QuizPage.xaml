@@ -28,6 +28,10 @@
 
                             <Label Text="Number of Questions:" FontAttributes="Bold" Margin="0,10,0,0"/>
                             <Label Text="10" HorizontalOptions="Center"/>
+
+                            <Label Text="Timed Mode:" FontAttributes="Bold" Margin="0,10,0,0"/>
+                            <Switch IsToggled="{Binding IsTimedMode, Mode=TwoWay}" HorizontalOptions="Start"/>
+                            <Label Text="15 seconds per question" FontSize="12" TextColor="Gray" IsVisible="{Binding IsTimedMode}"/>
                         </VerticalStackLayout>
                     </Frame>
 
@@ -50,6 +54,7 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         
                         <Label Text="{Binding CurrentQuestionNumber, StringFormat='Question {0}'}"
@@ -58,7 +63,19 @@
                         <Label Grid.Column="1"
                                Text="{Binding Score, StringFormat='Score: {0}'}"
                                FontSize="16"
-                               FontAttributes="Bold"/>
+                               FontAttributes="Bold"
+                               Margin="0,0,15,0"/>
+
+                        <Frame Grid.Column="2" 
+                               CornerRadius="20" 
+                               Padding="10,5"
+                               IsVisible="{Binding IsTimedMode}"
+                               BackgroundColor="{Binding QuestionTimeRemaining, Converter={StaticResource TimerColorConverter}}">
+                            <Label Text="{Binding QuestionTimeRemaining, StringFormat='{}{0}s'}"
+                                   FontSize="16"
+                                   FontAttributes="Bold"
+                                   TextColor="White"/>
+                        </Frame>
                     </Grid>
 
                     <ProgressBar Progress="{Binding CurrentQuestionNumber, Converter={StaticResource ProgressConverter}}"
