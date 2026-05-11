@@ -20,7 +20,7 @@ public static class MauiProgram
 			.Services
 			.AddSingleton<ICountryService, CountryService>()
 			.AddSingleton<IQuizService, QuizService>()
-			.AddTransient<SearchViewModel>()
+			.AddSingleton<SearchViewModel>()
 			.AddTransient<SearchPage>()
 			.AddTransient<CountryDetailViewModel>()
 			.AddTransient<CountryDetailPage>()
