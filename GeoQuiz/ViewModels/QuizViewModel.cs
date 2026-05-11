@@ -10,77 +10,77 @@ namespace GeoQuiz.ViewModels;
 
 public partial class QuizViewModel : ObservableObject
 {
-    private readonly IQuizService _quizService;
-    private readonly ICountryService _countryService;
-    private Timer? _timer;
-    private List<CountryDto> _allCountries = new();
-    private List<QuizQuestion> _questions = new();
-    private int _currentQuestionIndex;
+    private readonly IQuizService quizService;
+    private readonly ICountryService countryService;
+    private Timer? timer;
+    private List<CountryDto> allCountries = new();
+    private List<QuizQuestion> questions = new();
+    private int currentQuestionIndex;
 
     [ObservableProperty]
-    private bool _isLoading;
+    private bool isLoading;
 
     [ObservableProperty]
-    private bool _isQuizActive;
+    private bool isQuizActive;
 
     [ObservableProperty]
-    private bool _isQuizComplete;
+    private bool isQuizComplete;
 
     [ObservableProperty]
-    private string? _errorMessage;
+    private string? errorMessage;
 
     [ObservableProperty]
-    private int _currentQuestionNumber;
+    private int currentQuestionNumber;
 
     [ObservableProperty]
-    private int _totalQuestions = 10;
+    private int totalQuestions = 10;
 
     [ObservableProperty]
-    private string _questionText = string.Empty;
+    private string questionText = string.Empty;
 
     [ObservableProperty]
-    private string? _questionImageUrl;
+    private string? questionImageUrl;
 
     [ObservableProperty]
-    private bool _showQuestionImage;
+    private bool showQuestionImage;
 
     [ObservableProperty]
-    private ObservableCollection<string> _options = new();
+    private ObservableCollection<string> options = new();
 
     [ObservableProperty]
-    private string? _selectedOption;
+    private string? selectedOption;
 
     [ObservableProperty]
-    private bool _hasAnswered;
+    private bool hasAnswered;
 
     [ObservableProperty]
-    private bool _isCorrect;
+    private bool isCorrect;
 
     [ObservableProperty]
-    private int _score;
+    private int score;
 
     [ObservableProperty]
-    private int _correctAnswers;
+    private int correctAnswers;
 
     [ObservableProperty]
-    private QuizType _currentQuizType = QuizType.Capital;
+    private QuizType currentQuizType = QuizType.Capital;
 
     [ObservableProperty]
-    private bool _isTimedMode;
+    private bool isTimedMode;
 
     [ObservableProperty]
-    private int _questionTimeLimit = 15;
+    private int questionTimeLimit = 15;
 
     [ObservableProperty]
-    private int _questionTimeRemaining;
+    private int questionTimeRemaining;
 
     [ObservableProperty]
-    private bool _isTimeUp;
+    private bool isTimeUp;
 
     public QuizViewModel(IQuizService quizService, ICountryService countryService)
     {
-        _quizService = quizService;
-        _countryService = countryService;
+        this.quizService = quizService;
+        this.countryService = countryService;
     }
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
@@ -91,7 +91,7 @@ public partial class QuizViewModel : ObservableObject
         }
         else
         {
-            _timer?.Stop();
+            timer?.Stop();
             HandleTimeout();
         }
     }
@@ -110,20 +110,20 @@ public partial class QuizViewModel : ObservableObject
     {
         if (IsTimedMode)
         {
-            _timer?.Stop();
-            _timer = new Timer(1000);
-            _timer.Elapsed += OnTimerElapsed;
+            timer?.Stop();
+            timer = new Timer(1000);
+            timer.Elapsed += OnTimerElapsed;
             QuestionTimeRemaining = QuestionTimeLimit;
             IsTimeUp = false;
-            _timer.Start();
+            timer.Start();
         }
     }
 
     private void StopTimer()
     {
-        _timer?.Stop();
-        _timer?.Dispose();
-        _timer = null;
+        timer?.Stop();
+        timer?.Dispose();
+        timer = null;
     }
 
     [RelayCommand]
@@ -136,16 +136,16 @@ public partial class QuizViewModel : ObservableObject
 
         try
         {
-            _allCountries = await _countryService.GetAllCountriesAsync();
+            allCountries = await countryService.GetAllCountriesAsync();
             
-            if (_allCountries.Count < 4)
+            if (allCountries.Count < 4)
             {
                 ErrorMessage = "Not enough countries to start quiz";
                 return;
             }
 
-            _questions = _quizService.GenerateQuiz(_allCountries, TotalQuestions, CurrentQuizType);
-            _currentQuestionIndex = 0;
+            questions = quizService.GenerateQuiz(allCountries, TotalQuestions, CurrentQuizType);
+            currentQuestionIndex = 0;
             Score = 0;
             CorrectAnswers = 0;
             IsQuizActive = true;
@@ -168,15 +168,15 @@ public partial class QuizViewModel : ObservableObject
     {
         StopTimer();
 
-        if (_currentQuestionIndex >= _questions.Count)
+        if (currentQuestionIndex >= questions.Count)
         {
             IsQuizActive = false;
             IsQuizComplete = true;
             return;
         }
 
-        var question = _questions[_currentQuestionIndex];
-        CurrentQuestionNumber = _currentQuestionIndex + 1;
+        var question = questions[currentQuestionIndex];
+        CurrentQuestionNumber = currentQuestionIndex + 1;
         QuestionText = question.QuestionText;
         
         ShowQuestionImage = question.Type == QuizType.Flag;
@@ -199,14 +199,14 @@ public partial class QuizViewModel : ObservableObject
     [RelayCommand]
     private async Task SubmitAnswerAsync(string option)
     {
-        if (HasAnswered || _currentQuestionIndex >= _questions.Count) return;
+        if (HasAnswered || currentQuestionIndex >= questions.Count) return;
 
         StopTimer();
 
         SelectedOption = option;
         HasAnswered = true;
 
-        var question = _questions[_currentQuestionIndex];
+        var question = questions[currentQuestionIndex];
         IsCorrect = option == question.CorrectAnswer;
 
         if (IsCorrect)
@@ -218,7 +218,7 @@ public partial class QuizViewModel : ObservableObject
 
         await Task.Delay(1500);
         
-        _currentQuestionIndex++;
+        currentQuestionIndex++;
         LoadCurrentQuestion();
     }
 
@@ -228,7 +228,7 @@ public partial class QuizViewModel : ObservableObject
         StopTimer();
         IsQuizActive = false;
         IsQuizComplete = false;
-        _currentQuestionIndex = 0;
+        currentQuestionIndex = 0;
         Score = 0;
         CorrectAnswers = 0;
     }

@@ -8,11 +8,11 @@ namespace GeoQuiz.ViewModels;
 
 public partial class SearchViewModel : ObservableObject
 {
-    private readonly ICountryService _countryService;
+    private readonly ICountryService countryService;
 
     public SearchViewModel(ICountryService countryService)
     {
-        _countryService = countryService;
+        this.countryService = countryService;
         _ = LoadCountriesAsync();
     }
 
@@ -56,7 +56,7 @@ public partial class SearchViewModel : ObservableObject
 
         try
         {
-            var countries = await _countryService.GetAllCountriesAsync();
+            var countries = await countryService.GetAllCountriesAsync();
 
             Countries.Clear();
             foreach (var country in countries.OrderBy(c => c.CommonName))
@@ -101,8 +101,8 @@ public partial class SearchViewModel : ObservableObject
         try
         {
             var countries = string.IsNullOrWhiteSpace(SearchText)
-                ? await _countryService.GetAllCountriesAsync()
-                : await _countryService.SearchByNameAsync(SearchText);
+                ? await countryService.GetAllCountriesAsync()
+                : await countryService.SearchByNameAsync(SearchText);
 
             Countries.Clear();
             foreach (var country in countries.OrderBy(c => c.CommonName))
