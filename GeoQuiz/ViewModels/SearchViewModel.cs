@@ -13,6 +13,7 @@ public partial class SearchViewModel : ObservableObject
     public SearchViewModel(ICountryService countryService)
     {
         _countryService = countryService;
+        _ = LoadCountriesAsync();
     }
 
     [ObservableProperty]

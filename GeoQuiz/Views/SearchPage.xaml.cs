@@ -11,12 +11,8 @@ public partial class SearchPage : ContentPage
         BindingContext = viewModel;
     }
 
-    private async void ContentPage_Loaded(object sender, EventArgs e)
+    private void ContentPage_Loaded(object sender, EventArgs e)
     {
-        if (BindingContext is SearchViewModel viewModel)
-        {
-            await viewModel.LoadCommand.ExecuteAsync(null);
-        }
     }
 
     private async void OnCountrySelected(object sender, SelectionChangedEventArgs e)
