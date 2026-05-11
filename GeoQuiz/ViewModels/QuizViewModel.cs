@@ -60,6 +60,18 @@ public partial class QuizViewModel : ObservableObject
     private string option4 = string.Empty;
 
     [ObservableProperty]
+    private string option1Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string option2Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string option3Background = "#E0E0E0";
+
+    [ObservableProperty]
+    private string option4Background = "#E0E0E0";
+
+    [ObservableProperty]
     private string? selectedOption;
 
     [ObservableProperty]
@@ -202,6 +214,11 @@ public partial class QuizViewModel : ObservableObject
             Option4 = question.Options[3];
         }
 
+        Option1Background = "#E0E0E0";
+        Option2Background = "#E0E0E0";
+        Option3Background = "#E0E0E0";
+        Option4Background = "#E0E0E0";
+
         HasAnswered = false;
         IsCorrect = false;
         SelectedOption = null;
@@ -222,6 +239,21 @@ public partial class QuizViewModel : ObservableObject
 
         var question = questions[currentQuestionIndex];
         IsCorrect = option == question.CorrectAnswer;
+
+        string correctBg = "#90EE90";
+        string wrongBg = "#FF6B6B";
+
+        if (Option1 == question.CorrectAnswer) Option1Background = correctBg;
+        else if (Option1 == option && !IsCorrect) Option1Background = wrongBg;
+
+        if (Option2 == question.CorrectAnswer) Option2Background = correctBg;
+        else if (Option2 == option && !IsCorrect) Option2Background = wrongBg;
+
+        if (Option3 == question.CorrectAnswer) Option3Background = correctBg;
+        else if (Option3 == option && !IsCorrect) Option3Background = wrongBg;
+
+        if (Option4 == question.CorrectAnswer) Option4Background = correctBg;
+        else if (Option4 == option && !IsCorrect) Option4Background = wrongBg;
 
         if (IsCorrect)
         {

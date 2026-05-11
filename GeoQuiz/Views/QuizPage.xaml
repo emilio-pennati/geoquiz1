@@ -97,28 +97,32 @@
                                 Command="{Binding SubmitAnswerCommand}"
                                 CommandParameter="{Binding Option1}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option1Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
                         <Button Text="{Binding Option2}"
                                 Command="{Binding SubmitAnswerCommand}"
                                 CommandParameter="{Binding Option2}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option2Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
                         <Button Text="{Binding Option3}"
                                 Command="{Binding SubmitAnswerCommand}"
                                 CommandParameter="{Binding Option3}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option3Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
 
                         <Button Text="{Binding Option4}"
                                 Command="{Binding SubmitAnswerCommand}"
                                 CommandParameter="{Binding Option4}"
                                 IsEnabled="{Binding HasAnswered, Converter={StaticResource InverseBoolConverter}}"
-                                BackgroundColor="#E0E0E0"
+                                BackgroundColor="{Binding Option4Background}"
+                                TextColor="Black"
                                 HeightRequest="50"/>
                     </VerticalStackLayout>
 
