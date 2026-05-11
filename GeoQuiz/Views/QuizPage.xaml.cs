@@ -9,4 +9,13 @@ public partial class QuizPage : ContentPage
         InitializeComponent();
         BindingContext = viewModel;
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+        if (BindingContext is QuizViewModel viewModel)
+        {
+            viewModel.RestartQuizCommand.Execute(null);
+        }
+    }
 }
