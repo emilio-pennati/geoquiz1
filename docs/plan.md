@@ -29,17 +29,35 @@
 - 4 opzioni di risposta
 - Scoring locale
 
-### Iterazione 6: Funzionalità Avanzate
-- Quiz cronometrato
-- Filtri per continente
-- Quiz bandiere
-- Statistiche dettagliate
-- Paesi preferiti
+### Iterazione 6: Quiz Cronometrato
+- Timer per quiz
+- Modalità timed vs relax
+- Timeout per risposta
 
-### Iterazione 7: Persistenza e Stats
+### Iterazione 7: Filtri per Continente
+- Selezione continente nella search
+- Quiz filtrato per regione
+- Filtro anche in CountryDetail
+
+### Iterazione 8: Quiz Bandiere
+- Domande con immagine bandiera
+- "Quale paese ha questa bandiera?"
+- Shuffle opzioni
+
+### Iterazione 9: Paesi Preferiti
+- Aggiungi/rimuovi preferiti
+- Salvataggio locale
+- Filtro "solo preferiti"
+
+### Iterazione 10: Statistiche Base
+- Punteggi totali
+- Numero quiz completati
+- Percentuale corrette
+
+### Iterazione 11: Persistenza e Stats Avanzate
 - SQLite per salvataggio punteggi
 - Cronologia sessioni
-- Statistiche utente
+- Statistiche utente dettagliate
 
 ## Rischi
 - Rate limit API
