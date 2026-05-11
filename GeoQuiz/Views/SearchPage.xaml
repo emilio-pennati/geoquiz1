@@ -4,8 +4,7 @@
              xmlns:vm="clr-namespace:GeoQuiz.ViewModels"
              x:Class="GeoQuiz.Views.SearchPage"
              x:DataType="vm:SearchViewModel"
-             Title="Search Countries"
-             Loaded="ContentPage_Loaded">
+              Title="Search Countries">
 
     <Grid>
         <VerticalStackLayout>

@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.Json;
 using System.Timers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -109,15 +110,18 @@ public partial class QuizViewModel : ObservableObject
 
     private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
     {
-        if (QuestionTimeRemaining > 0)
+        MainThread.BeginInvokeOnMainThread(() =>
         {
-            QuestionTimeRemaining--;
-        }
-        else
-        {
-            timer?.Stop();
-            HandleTimeout();
-        }
+            if (QuestionTimeRemaining > 0)
+            {
+                QuestionTimeRemaining--;
+            }
+            else
+            {
+                timer?.Stop();
+                HandleTimeout();
+            }
+        });
     }
 
     private void HandleTimeout()
@@ -134,7 +138,7 @@ public partial class QuizViewModel : ObservableObject
     {
         if (IsTimedMode)
         {
-            timer?.Stop();
+            StopTimer();
             timer = new Timer(1000);
             timer.Elapsed += OnTimerElapsed;
             QuestionTimeRemaining = QuestionTimeLimit;
@@ -145,9 +149,13 @@ public partial class QuizViewModel : ObservableObject
 
     private void StopTimer()
     {
-        timer?.Stop();
-        timer?.Dispose();
-        timer = null;
+        if (timer != null)
+        {
+            timer.Elapsed -= OnTimerElapsed;
+            timer.Stop();
+            timer.Dispose();
+            timer = null;
+        }
     }
 
     [RelayCommand]
@@ -178,9 +186,21 @@ public partial class QuizViewModel : ObservableObject
             LoadCurrentQuestion();
             StartTimer();
         }
-        catch (Exception ex)
+        catch (HttpRequestException)
         {
-            ErrorMessage = ex.Message;
+            ErrorMessage = "Unable to reach the server. Please check your internet connection.";
+        }
+        catch (JsonException)
+        {
+            ErrorMessage = "Received malformed data from the service.";
+        }
+        catch (TaskCanceledException)
+        {
+            ErrorMessage = "The request timed out. Please try again.";
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "An unexpected error occurred. Please try again.";
         }
         finally
         {
@@ -228,32 +248,49 @@ public partial class QuizViewModel : ObservableObject
     }
 
     [RelayCommand]
-    private async Task SubmitAnswerAsync(string option)
+    private async Task SubmitAnswerAsync(string optionIndex)
     {
         if (HasAnswered || currentQuestionIndex >= questions.Count) return;
 
         StopTimer();
 
-        SelectedOption = option;
+        string selectedText = optionIndex switch
+        {
+            "1" => Option1,
+            "2" => Option2,
+            "3" => Option3,
+            "4" => Option4,
+            _ => string.Empty
+        };
+
+        SelectedOption = selectedText;
         HasAnswered = true;
 
         var question = questions[currentQuestionIndex];
-        IsCorrect = option == question.CorrectAnswer;
+        IsCorrect = selectedText == question.CorrectAnswer;
 
         string correctBg = "#90EE90";
         string wrongBg = "#FF6B6B";
 
-        if (Option1 == question.CorrectAnswer) Option1Background = correctBg;
-        else if (Option1 == option && !IsCorrect) Option1Background = wrongBg;
+        if (Option1 == question.CorrectAnswer)
+            Option1Background = correctBg;
+        else if (optionIndex == "1")
+            Option1Background = wrongBg;
 
-        if (Option2 == question.CorrectAnswer) Option2Background = correctBg;
-        else if (Option2 == option && !IsCorrect) Option2Background = wrongBg;
+        if (Option2 == question.CorrectAnswer)
+            Option2Background = correctBg;
+        else if (optionIndex == "2")
+            Option2Background = wrongBg;
 
-        if (Option3 == question.CorrectAnswer) Option3Background = correctBg;
-        else if (Option3 == option && !IsCorrect) Option3Background = wrongBg;
+        if (Option3 == question.CorrectAnswer)
+            Option3Background = correctBg;
+        else if (optionIndex == "3")
+            Option3Background = wrongBg;
 
-        if (Option4 == question.CorrectAnswer) Option4Background = correctBg;
-        else if (Option4 == option && !IsCorrect) Option4Background = wrongBg;
+        if (Option4 == question.CorrectAnswer)
+            Option4Background = correctBg;
+        else if (optionIndex == "4")
+            Option4Background = wrongBg;
 
         if (IsCorrect)
         {

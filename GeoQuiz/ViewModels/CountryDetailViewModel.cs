@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using GeoQuiz.Models;
 using GeoQuiz.Services;
@@ -15,10 +16,13 @@ public partial class CountryDetailViewModel : ObservableObject
     private bool isBusy;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(HasError))]
     private string? errorMessage;
 
     [ObservableProperty]
     private bool hasData;
+
+    public bool HasError => !string.IsNullOrWhiteSpace(ErrorMessage);
 
     public CountryDetailViewModel(ICountryService countryService)
     {
@@ -43,9 +47,24 @@ public partial class CountryDetailViewModel : ObservableObject
                 ErrorMessage = "Country not found";
             }
         }
-        catch (Exception ex)
+        catch (HttpRequestException)
         {
-            ErrorMessage = ex.Message;
+            ErrorMessage = "Unable to reach the server. Please check your internet connection.";
+            HasData = false;
+        }
+        catch (JsonException)
+        {
+            ErrorMessage = "Received malformed data from the service.";
+            HasData = false;
+        }
+        catch (TaskCanceledException)
+        {
+            ErrorMessage = "The request timed out. Please try again.";
+            HasData = false;
+        }
+        catch (Exception)
+        {
+            ErrorMessage = "An unexpected error occurred. Please try again.";
             HasData = false;
         }
         finally
